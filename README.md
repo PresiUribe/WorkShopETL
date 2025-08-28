@@ -1,85 +1,197 @@
 # WorkShopETL
-Este proyecto es un ejercicio de ingeniería de datos para simular un proceso ETL (Extract, Transform, Load) completo. El objetivo es extraer datos de un archivo CSV, transformarlos en un modelo dimensional (DDM), cargarlos en un Data Warehouse (DW) y generar reportes con KPIs y visualizaciones.
+This project is a data engineering exercise to simulate a complete ETL (Extract, Transform, Load) process. The objective is to extract data from a CSV file, transform it into a dimensional data model (DDM), load it into a Data Warehouse (DW), and generate reports with KPIs and visualizations.
 
-Justificación del Modelo de Datos Dimensional (DDM)
-Modelo Estrella (Star Schema)
+Justification of the Dimensional Data Model (DDM)
+Star Schema Model
 
-El modelo elegido para la transformación y carga de los datos es un modelo estrella (Star Schema), que es una de las técnicas más comunes en el diseño de Data Warehouses. El modelo estrella se caracteriza por tener una tabla de hechos centralizada, rodeada de tablas de dimensiones que describen las diferentes perspectivas de los datos.
+The chosen model for data transformation and loading is a star schema, which is one of the most common techniques in Data Warehouse design. The star schema is characterized by having a centralized fact table, surrounded by dimension tables that describe different perspectives of the data.
 
-Tablas de Dimensiones
+Dimension Tables
 
-Dimensión Tecnología (DimensionTechnology): Esta tabla contiene información sobre las tecnologías utilizadas por los candidatos. Está representada por un identificador único de tecnología (TechnologyID) y un nombre de tecnología. Esta dimensión permite analizar los candidatos según las tecnologías en las que tienen experiencia o en las que se postulan.
+Technology Dimension (DimensionTechnology): This table contains information about the technologies used by the candidates. It is represented by a unique technology identifier (TechnologyID) and a technology name. This dimension allows analyzing candidates according to the technologies in which they have experience or are applying for.
 
-Dimensión Año (DimensionYear): Esta tabla contiene el año de la aplicación de los candidatos. La columna ApplicationYear se extrae de la fecha de la solicitud (Application Date) y se asigna un identificador único de año (YearID). Esta dimensión facilita el análisis de los contratados por año.
+Year Dimension (DimensionYear): This table contains the year when the candidates applied. The column ApplicationYear is extracted from the application date (Application Date) and assigned a unique year identifier (YearID). This dimension facilitates the analysis of hires by year.
 
-Dimensión Senioridad (DimensionSeniority): Esta tabla almacena los niveles de senioridad de los candidatos (por ejemplo, junior, senior, etc.). La columna Seniority se usa para representar estos niveles y asignar un identificador único (SeniorityID), permitiendo analizar el número de contrataciones según el nivel de experiencia de los candidatos.
+Seniority Dimension (DimensionSeniority): This table stores the candidates' seniority levels (e.g., junior, senior, etc.). The column Seniority is used to represent these levels and assign a unique identifier (SeniorityID), allowing the analysis of hires according to the candidates' experience level.
 
-Tabla de Hechos
+Fact Table
 
-La tabla de hechos elegida es FactCandidates, que contiene las métricas relacionadas con los candidatos en el proceso de selección. Esta tabla incluye las siguientes columnas:
+The chosen fact table is FactCandidates, which contains metrics related to the candidates in the selection process. This table includes the following columns:
 
-CandidateID: Identificador único de cada candidato.
+CandidateID: Unique identifier for each candidate.
 
-TechnologyID: Relacionado con la DimensionTechnology, identifica la tecnología relacionada con el candidato.
+TechnologyID: Related to DimensionTechnology, identifies the technology associated with the candidate.
 
-YearID: Relacionado con la DimensionYear, representa el año en que el candidato aplicó.
+YearID: Related to DimensionYear, represents the year the candidate applied.
 
-SeniorityID: Relacionado con la DimensionSeniority, identifica el nivel de senioridad del candidato.
+SeniorityID: Related to DimensionSeniority, identifies the candidate's seniority level.
 
-CodeChallengeScore: La puntuación obtenida por el candidato en el reto de codificación.
+CodeChallengeScore: The score obtained by the candidate in the coding challenge.
 
-TechnicalInterviewScore: La puntuación obtenida por el candidato en la entrevista técnica.
+TechnicalInterviewScore: The score obtained by the candidate in the technical interview.
 
-Hired: Un valor booleano que indica si el candidato fue contratado o no.
+Hired: A boolean value indicating whether the candidate was hired or not.
 
-¿Por qué esta es la tabla de hechos?
+Why this is the fact table
 
-La tabla FactCandidates es adecuada para ser la tabla de hechos porque contiene las métricas clave relacionadas con el proceso de selección. En ella se encuentran las puntuaciones de los candidatos, su nivel de senioridad, la tecnología en la que se especializan, y si fueron contratados o no. Estas métricas se utilizan para calcular KPIs (como la tasa de contratación, contrataciones por tecnología, contrataciones por año, etc.), lo que convierte a esta tabla en el centro de la estructura de datos.
+FactCandidates is suitable as the fact table because it contains the key metrics related to the selection process. It includes the candidates’ scores, their seniority level, the technology they specialize in, and whether they were hired. These metrics are used to calculate KPIs (such as hire rate, hires by technology, hires by year, etc.), making this table the central component of the data structure.
 
-Flujo del Proceso ETL
+ETL Process Flow
+Extraction (Extract):
 
-Extracción (Extract):
+The extraction process takes the CSV file containing candidate data and loads it into a Pandas DataFrame.
 
-El proceso de extracción toma el archivo CSV que contiene los datos de los candidatos y lo carga en un DataFrame de Pandas.
+An initial transformation is performed to calculate the Hired column based on the candidates’ scores.
 
-Se realiza una transformación inicial para calcular la columna Hired en función de las puntuaciones de los candidatos.
+Transformation (Transform):
 
-Transformación (Transform):
+Business rules are applied to determine if a candidate was hired (both scores must be greater than or equal to 7).
 
-Se aplica la regla de negocio para determinar si un candidato fue contratado (ambas puntuaciones deben ser mayores o iguales a 7).
+Dimension tables are created: DimensionTechnology, DimensionYear, and DimensionSeniority, assigning unique identifiers for each technology, year, and seniority level.
 
-Se crean las tablas de dimensiones: DimensionTechnology, DimensionYear, y DimensionSeniority, donde se asignan identificadores únicos a cada tecnología, año y nivel de senioridad.
+Finally, the fact table, FactCandidates, is prepared with the key metrics.
 
-Finalmente, se prepara la tabla de hechos, FactCandidates, que contiene las métricas clave.
+Load (Load):
 
-Carga (Load):
+The transformed data is loaded into a Data Warehouse (DW) using SQLAlchemy and pymysql.
 
-Los datos transformados se cargan en un Data Warehouse (DW) utilizando SQLAlchemy y pymysql.
+Dimension tables are loaded first, followed by the fact table.
 
-Las tablas de dimensiones se cargan primero, seguidas de la tabla de hechos.
+KPIs and Visualizations
 
-KPIs y Visualizaciones
+Several visualizations were generated for the most relevant KPIs:
 
-Se generaron varias visualizaciones con los KPIs más relevantes:
+Hires by Technology: Number of hires per technology.
 
-Hires by Technology: Visualización del número de contrataciones por tecnología.
+Hires by Year: Number of hires per year.
 
-Hires by Year: Visualización del número de contrataciones por año.
+Hires by Seniority: Number of hires by seniority level.
 
-Hires by Seniority: Visualización del número de contrataciones por nivel de senioridad.
+Hires by Country: Hires in specific countries (USA, Brazil, Colombia, Ecuador).
 
-Hires by Country: Visualización de contrataciones en países específicos (USA, Brasil, Colombia, Ecuador).
+Hires by Experience Range: Number of hires by candidates' experience range.
 
-Hires by Experience Range: Visualización del número de contrataciones según el rango de experiencia de los candidatos.
+Hire Rate: Percentage of candidates hired.
 
-Hire Rate: Porcentaje de contratación.
+Average Scores: Average scores in the Code Challenge and Technical Interview.
 
-Average Scores: Promedio de puntuaciones en el "Code Challenge" y la "Technical Interview".
+Technologies Used
 
-Tecnologías Utilizadas
+Python: For data processing and visualization creation.
 
-Python: Para el procesamiento de datos y creación de visualizaciones.
+SQLAlchemy and pymysql: For connecting to the Data Warehouse (MySQL).
 
-SQLAlchemy y pymysql: Para la conexión con el Data Warehouse (MySQL).
+Seaborn and Matplotlib: For creating KPI visualizations.
 
-Seaborn y Matplotlib: Para la creación de visualizaciones de KPIs.
+Si quieres, puedo hacer una versión aún más profesional para tu README de GitHub en inglés, lista para subir directamente, incluyendo secciones de instalación y ejecución.
+
+¿Quieres que haga eso?
+
+Tú dijiste:
+si
+ChatGPT Plus
+
+Perfecto, aquí tienes una versión profesional lista para usar como README.md en inglés para tu proyecto ETL en GitHub:
+
+WorkShopETL
+
+This project is a data engineering exercise simulating a complete ETL (Extract, Transform, Load) process. The objective is to extract candidate data from a CSV file, transform it into a dimensional data model (DDM), load it into a Data Warehouse (DW), and generate reports with KPIs and visualizations.
+
+Table of Contents
+
+Dimensional Data Model (DDM) Justification
+
+ETL Process Flow
+
+KPIs and Visualizations
+
+Technologies Used
+
+How to Run the Project
+
+Gitignore Recommendations
+
+Dimensional Data Model (DDM) Justification
+Star Schema Model
+
+The data is structured using a star schema, a widely used design pattern for Data Warehouses. A star schema consists of a central fact table surrounded by dimension tables, allowing efficient analysis across multiple perspectives.
+
+Dimension Tables
+
+Technology Dimension (DimensionTechnology): Contains information about technologies used by candidates. Includes a unique identifier (TechnologyID) and technology name. Allows analysis of hires by technology.
+
+Year Dimension (DimensionYear): Contains the application year of each candidate (ApplicationYear) with a unique identifier (YearID). Facilitates analysis of hires by year.
+
+Seniority Dimension (DimensionSeniority): Stores the seniority levels of candidates (e.g., Junior, Senior) and assigns a unique identifier (SeniorityID). Enables analysis of hires by experience level.
+
+Fact Table
+
+The fact table is FactCandidates, containing metrics related to the candidate selection process. It includes:
+
+CandidateID: Unique identifier for each candidate
+
+TechnologyID: Links to DimensionTechnology
+
+YearID: Links to DimensionYear
+
+SeniorityID: Links to DimensionSeniority
+
+CodeChallengeScore: Candidate's coding challenge score
+
+TechnicalInterviewScore: Candidate's technical interview score
+
+Hired: Boolean indicating if the candidate was hired
+
+Why FactCandidates is the Fact Table
+
+FactCandidates is central because it stores the key metrics used for KPIs such as hire rate, hires by technology, hires by year, etc., making it the core of the star schema.
+
+ETL Process Flow
+
+Extract: Load the CSV containing candidate data into a Pandas DataFrame.
+
+An initial transformation is performed to calculate the Hired column based on candidate scores.
+
+Transform:
+
+Apply business rules to determine if a candidate was hired (both scores ≥ 7).
+
+Create dimension tables: DimensionTechnology, DimensionYear, DimensionSeniority.
+
+Prepare the fact table, FactCandidates, with the key metrics.
+
+Load:
+
+Load the transformed data into a MySQL Data Warehouse using SQLAlchemy and pymysql.
+
+Dimension tables are loaded first, followed by the fact table.
+
+KPIs and Visualizations
+
+The following KPIs are visualized:
+
+Hires by Technology
+
+Hires by Year
+
+Hires by Seniority
+
+Hires by Country (USA, Brazil, Colombia, Ecuador)
+
+Hires by Experience Range
+
+Hire Rate (%)
+
+Average Scores (Code Challenge & Technical Interview)
+
+Visualizations are created with Seaborn and Matplotlib.
+
+Technologies Used
+
+Python – Data processing and visualization
+
+Pandas – Data manipulation
+
+SQLAlchemy & pymysql – MySQL Data Warehouse connection
+
+Seaborn & Matplotlib – KPI visualizations
