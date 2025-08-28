@@ -1,7 +1,7 @@
 import pandas as pd
 from sqlalchemy import create_engine
-import matplotlib.pyplot as plt
-import seaborn as sns
+
+
 
 # Cargar el archivo CSV con el separador ;
 df = pd.read_csv('candidates.csv', sep=';')
