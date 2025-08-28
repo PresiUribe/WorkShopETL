@@ -117,7 +117,7 @@ plt.ylabel('Number of Hires', fontsize=12)
 plt.tight_layout()
 plt.show()
 
-# 7. Average Scores (Code Challenge & Technical Interview)
+# 6. Average Scores (Code Challenge & Technical Interview)
 # Consulta para obtener los promedios de las puntuaciones
 query_avg_scores = """
 SELECT 

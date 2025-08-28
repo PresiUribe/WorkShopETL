@@ -70,7 +70,6 @@ The following KPIs are visualized:
 - **Hires by Seniority**
 - **Hires by Country** (USA, Brazil, Colombia, Ecuador)
 - **Hires by Experience Range**
-- **Hire Rate (%)**
 - **Average Scores** (Code Challenge & Technical Interview)
 
 Visualizations are created using **Seaborn** and **Matplotlib**.
