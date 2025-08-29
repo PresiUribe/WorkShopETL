@@ -6,3 +6,6 @@ __pycache__/
 .workshop
 # Data
 *.csv
+# Carpetas de salidas
+visualizations_output/
+*.pdf
