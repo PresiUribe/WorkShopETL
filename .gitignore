@@ -1,0 +1,15 @@
+# Python
+*.pyc
+*.pyo
+__pycache__/
+
+# Virtual environments
+env/
+venv/
+
+# IDEs
+.vscode/
+.idea/
+
+# Data
+*.csv
