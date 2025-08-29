@@ -89,14 +89,14 @@ save_and_show("hires_by_seniority.png")
 query_country = """
 SELECT Country, COUNT(*) AS Hires
 FROM FactCandidates
-WHERE Hired = 1 AND Country IN ('United States of America', 'Brazil', 'Colombia', 'Ecuador')
+WHERE Hired = 1 AND Country IN ('United States of America', 'Brazil', 'Colombia', 'Spain','Canada')
 GROUP BY Country;
 """
 kpi_data_country = pd.read_sql(query_country, engine)
 
 plt.figure(figsize=(12,6))
-sns.barplot(x='Country', y='Hires', data=kpi_data_country, palette='Set2')
-plt.title('Hires by Country (USA, Brazil, Colombia, Ecuador)', fontsize=16, weight='bold')
+sns.barplot(x='Country', y='Hires', data=kpi_data_country, palette='Set2', order=kpi_data_country.sort_values('Hires', ascending=False).Country)
+plt.title('Hires by Country (USA, Brazil, Colombia, Spain, Canada)', fontsize=16, weight='bold')
 plt.xlabel('Country', fontsize=12)
 plt.ylabel('Number of Hires', fontsize=12)
 save_and_show("hires_by_country.png")
